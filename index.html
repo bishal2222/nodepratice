@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <input placeholder="Enter id" id="id" />
+      <input placeholder="Enter name" id="name" />
+      <button id="submit">Add to carts</button>
+
+      <div id="app"></div>
+    </div>
+
+    <script>
+      const id = document.getElementById("id");
+      const name = document.getElementById("name");
+      const btn = document.getElementById("submit");
+      const app = document.getElementById("app");
+
+      const fetchAndDisplayData = async () => {
+        //clear
+
+        await fetch("/products")
+          .then((res) => res.json())
+          .then((data) => {
+            data.data.map((item) => {
+              app.innerHTML += `<p>${item.name}</p>`;
+            });
+          });
+      };
+
+      const saveData = async () => {
+        await fetch("/product", {
+          method: "POST",
+          body: JSON.stringify({ name: name.value, id: id.value }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      };
+
+      btn.addEventListener("click", async () => {
+        app.innerHTML = "";
+        await saveData();
+        await fetchAndDisplayData();
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchAndDisplayData();
+      });
+    </script>
+  </body>
+</html>
